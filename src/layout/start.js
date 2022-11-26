@@ -21,6 +21,7 @@ function Start(props) {
   // 시간이 필요합니다.
     useEffect(() => {
         authService.onAuthStateChanged((user) => {
+            console.log(user);
           if (user) {
             setLogin(true);
           } else {
@@ -70,13 +71,23 @@ function Start(props) {
         try {
             if (newAccount) {
                 createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
-                    // Signed up
+                    // 회원가입
                     console.log(userCredential.user);
+
+                    // 회원가입이 완료되면 가입된 회원에 닉네임 저장시키기
+                    updateProfile(auth.currentUser,{
+                        displayName:nickname
+                    })
+                    .then(()=>{
+                        dispatch({type: 'login', payload:user})
+                    }).catch((err) => {
+                        console.log(err.message);
+                    });
 
                 });
             } else {
                 signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-                    // Signed in
+                    // 로그인
                     console.log(user = userCredential.user);
                     // ...
                 });
@@ -123,6 +134,7 @@ function Start(props) {
                     props.justStart(e);
                 }}>그냥 시작하기</button>
             </div>
+            
         </div>
     );
 }
